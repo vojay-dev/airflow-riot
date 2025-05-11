@@ -4,12 +4,21 @@ import os
 from datetime import datetime
 
 from airflow.sdk import dag, task, Variable
+from airflow.timetables.trigger import MultipleCronTriggerTimetable
 
 from dags.riot import RiotApiClient, Summoner, Match
 
 API_KEY = Variable.get("riot_api_key")
 
-@dag(schedule=None)
+@dag(
+    schedule=MultipleCronTriggerTimetable(
+        "0 10 * * *",
+        "0 14 * * *",
+        timezone="UTC"
+    ),
+    start_date=datetime(2025, 5, 10),
+    dag_display_name="League of Legends 🎮 - Champion Performance Analysis 🏆"
+)
 def lol():
 
     @task
